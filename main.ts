@@ -749,7 +749,7 @@ async function handleCommand(
     }
 
     case "/banlist": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, ambiguous } = await extractLookupTarget(args, replyToMessage, rawMessage.fwd_messages ?? []);
       if (ambiguous || !targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       const userId = targetId;
