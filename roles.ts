@@ -4,7 +4,7 @@
 import { redis } from "./kv.ts";
 
 export type GlobalRole = "spec_admin" | "deputy_spec_admin";
-export type ServerRole = "main_admin";
+export type ServerRole = "main_admin" | "king_salad";
 export type ChatRole = "deputy_main_admin" | "senior_admin" | "admin" | "senior_moderator" | "moderator";
 export type AnyRole = "developer" | GlobalRole | ServerRole | ChatRole | "user";
 
@@ -13,6 +13,7 @@ export const ROLE_WEIGHT: Record<AnyRole, number> = {
   spec_admin: 95,
   deputy_spec_admin: 90,
   main_admin: 85,
+  king_salad: 87,
   deputy_main_admin: 80,
   senior_admin: 70,
   admin: 60,
@@ -26,6 +27,7 @@ export const ROLE_LABEL: Record<AnyRole, string> = {
   spec_admin: "Спец. администратор",
   deputy_spec_admin: "Зам. спец. администратора",
   main_admin: "Главный администратор",
+  king_salad: "Король салатников",
   deputy_main_admin: "Зам. главного администратора",
   senior_admin: "Старший администратор",
   admin: "Администратор",
@@ -40,6 +42,7 @@ export const ROLE_GENITIVE: Record<AnyRole, string> = {
   spec_admin: "спец. администратора",
   deputy_spec_admin: "зам. спец. администратора",
   main_admin: "главного администратора",
+  king_salad: "короля салатников",
   deputy_main_admin: "зам. главного администратора",
   senior_admin: "старшего администратора",
   admin: "администратора",
@@ -49,7 +52,7 @@ export const ROLE_GENITIVE: Record<AnyRole, string> = {
 };
 
 const CHAT_ROLES: ChatRole[] = ["deputy_main_admin", "senior_admin", "admin", "senior_moderator", "moderator"];
-const SERVER_ROLES: ServerRole[] = ["main_admin"];
+const SERVER_ROLES: ServerRole[] = ["king_salad", "main_admin"];
 
 function developerIds(): number[] {
   return (Deno.env.get("DEVELOPER_IDS") ?? "")
