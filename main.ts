@@ -476,6 +476,17 @@ async function handleCommand(
 
   if (await handleRankCommand(peerId, fromId, cmid, serverName, command, args, replyToMessage)) return;
 
+  if (command === "/removerole") {
+    const current = await resolveUserRole(peerId, fromId, serverName);
+    if (current.role === "user" || current.role === "developer") { await reply(peerId, cmid, NO_PERMISSION); return; }
+    if (current.role === "spec_admin" || current.role === "deputy_spec_admin") await removeGlobalRole(current.role, fromId);
+    else if (current.role === "main_admin") {
+      if (!serverName) { await reply(peerId, cmid, "Эта беседа не привязана к серверу."); return; }
+      await removeServerRole(serverName, current.role, fromId);
+    } else await removeChatRole(peerId, current.role, fromId);
+    await reply(peerId, cmid, "Роль снята.");
+    return;
+  }
   switch (command) {
     case "/help": {
       const { weight } = await resolveUserRole(peerId, fromId, serverName);
@@ -496,7 +507,7 @@ async function handleCommand(
 
     case "/staff": {
       if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
-      await reply(peerId, cmid, await buildStaffMessage(peerId, serverName));
+      await reply(peerId, cmid, await buildStaffMessage(peerId, serverName, fromId));
       break;
     }
 
