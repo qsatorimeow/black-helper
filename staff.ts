@@ -69,13 +69,18 @@ export const ALT_MAP: Record<string,string> = {
   "gnick":"/getnick","никлист":"/getnick","ники":"/nlist","чекбан":"/getban","гетбан":"/getban",
   "исп":"/addisp","мут":"/mute","снятьмут":"/unmute","чистка":"/clear","senmoder":"/addsenmoder",
   "бан":"/ban","ms":"/addms","мс":"/addms","банлист":"/banlist",
-  "olist":"/onlinelist","онлайнлист":"/onlinelist","олист":"/onlinelist","зов":"/export async function buildStaffMessage(peerId: number, serverName: string | null, viewerId: number): Promise<string> {
+  "olist":"/onlinelist","онлайнлист":"/onlinelist","олист":"/onlinelist","зов":"/zov",
+  "тишина":"/timeout","senadmin":"/addsenadmin"
+};
+
+export async function buildStaffMessage(peerId: number, serverName: string | null, viewerId: number): Promise<string> {
   const viewer = await resolveUserRole(peerId, viewerId, serverName);
   const [members, mainAdmins, ...chatRoleMembers] = await Promise.all([
     getConversationMembers(peerId),
     serverName ? getServerRoleMembers(serverName, "main_admin") : Promise.resolve([]),
     ...CHAT_ROLES.map((role) => getChatRoleMembers(peerId, role)),
   ]);
+
   const owner = members.find((m) => m.isOwner);
   const ids = [...mainAdmins, ...chatRoleMembers.flat()];
   const infoMap = await getUsersInfo(ids);
@@ -83,6 +88,7 @@ export const ALT_MAP: Record<string,string> = {
     const info = infoMap.get(id);
     return profileLink(id, info ? info.first_name + " " + info.last_name : "id" + id);
   };
+
   const sections: [string, AnyRole, number[], string][] = [
     ["Короли салатников", "main_admin", mainAdmins, "Отсутствует"],
     ["Зам. короля салатников", "deputy_main_admin", chatRoleMembers[0], "Отсутствует"],
@@ -91,9 +97,17 @@ export const ALT_MAP: Record<string,string> = {
     ["Старшие модераторы", "senior_moderator", chatRoleMembers[3], "Отсутствуют"],
     ["Испытательные сроки", "moderator", chatRoleMembers[4], "Отсутствуют"],
   ];
-  const lines = ["Владелец беседы — " + (owner ? await nameLinkOfAny(owner.memberId) : "Отсутствуют"), ""];
+
+  const lines = [
+    "Владелец беседы — " + (owner ? await nameLinkOfAny(owner.memberId) : "Отсутствуют"),
+    "",
+  ];
+
   for (const [title, role, userIds, empty] of sections) {
-    if (ROLE_WEIGHT[role] <= viewer.weight) lines.push(title + ":", userIds.length ? userIds.map(nameOf).join("\n") : empty, "");
+    if (ROLE_WEIGHT[role] <= viewer.weight) {
+      lines.push(title + ":", userIds.length ? userIds.map(nameOf).join("\n") : empty, "");
+    }
   }
+
   return lines.join("\n").trim();
 }
