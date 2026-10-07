@@ -96,14 +96,15 @@ export const ALT_MAP: Record<string,string> = {
 
 export async function buildStaffMessage(peerId: number, serverName: string | null, viewerId: number): Promise<string> {
   const viewer = await resolveUserRole(peerId, viewerId, serverName);
-  const [members, mainAdmins, ...chatRoleMembers] = await Promise.all([
+  const [members, mainAdmins, kings, ...chatRoleMembers] = await Promise.all([
     getConversationMembers(peerId),
     serverName ? getServerRoleMembers(serverName, "main_admin") : Promise.resolve([]),
+    serverName ? getServerRoleMembers(serverName, "king_salad") : Promise.resolve([]),
     ...CHAT_ROLES.map((role) => getChatRoleMembers(peerId, role)),
   ]);
 
   const owner = members.find((m) => m.isOwner);
-  const ids = [...mainAdmins, ...chatRoleMembers.flat()];
+  const ids = [...mainAdmins, ...kings, ...chatRoleMembers.flat()];
   const infoMap = await getUsersInfo(ids);
   const nameOf = (id: number) => {
     const info = infoMap.get(id);
