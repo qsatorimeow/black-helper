@@ -28,11 +28,11 @@ export const ROLE_LABEL: Record<AnyRole, string> = {
   deputy_spec_admin: "Зам. спец. администратора",
   main_admin: "Главный администратор",
   king_salad: "Король салатников",
-  deputy_main_admin: "Зам. главного администратора",
+  deputy_main_admin: "Зам. короля салатников",
   senior_admin: "Старший администратор",
-  admin: "Администратор",
+  admin: "Мега салатник",
   senior_moderator: "Старший модератор",
-  moderator: "Модератор",
+  moderator: "Испытательный срок",
   user: "Пользователь",
 };
 
@@ -43,11 +43,11 @@ export const ROLE_GENITIVE: Record<AnyRole, string> = {
   deputy_spec_admin: "зам. спец. администратора",
   main_admin: "главного администратора",
   king_salad: "короля салатников",
-  deputy_main_admin: "зам. главного администратора",
+  deputy_main_admin: "зам. короля салатников",
   senior_admin: "старшего администратора",
-  admin: "администратора",
+  admin: "мега салатника",
   senior_moderator: "старшего модератора",
-  moderator: "модератора",
+  moderator: "испытательного срока",
   user: "пользователя",
 };
 
