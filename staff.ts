@@ -130,6 +130,8 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
 
   { cmd: "/addsa", description: "назначить спец. админа", minRole: "developer" },
   { cmd: "/delsa", description: "снять спец. админа", minRole: "developer" },
+  { cmd: "/addks", description: "назначить короля салатников", minRole: "developer" },
+  { cmd: "/delks", description: "снять короля салатников", minRole: "developer" },
   { cmd: "/resetdata", description: "полная очистка данных (только в ЛС боту)", minRole: "developer" },
 ];
 
