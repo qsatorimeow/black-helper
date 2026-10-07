@@ -7,7 +7,7 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/stats",description:"статистика профиля",minRole:"user"},
   {cmd:"/help",description:"список доступных вам команд",minRole:"user"},
   {cmd:"/info",description:"официальные ресурсы проекта",minRole:"user"},
-  {cmd:"/staff",description:"список рангов беседы",minRole:"moderator"},
+  {cmd:"/staff",description:"список рангов беседы",minRole:"user"},
   {cmd:"/alt",description:"альтернативные названия команд",minRole:"user"},
   {cmd:"/setnick",description:"назначить ник",minRole:"senior_moderator"},
   {cmd:"/removenick",description:"убрать ник",minRole:"senior_moderator"},
@@ -23,7 +23,9 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/addsenmoder",description:"назначить старшего модератора",minRole:"admin"},
   {cmd:"/ban",description:"блокировка в этой беседе",minRole:"admin"},
   {cmd:"/addms",description:"назначить администратора",minRole:"senior_admin"},
-  {cmd:"/banlist",description:"активные блокировки данного сервера",minRole:"admin"},
+  {cmd:"/banlist",description:"блокировки пользователя",minRole:"admin"},
+  {cmd:"/sbanlist",description:"все серверные блокировки",minRole:"senior_admin"},
+  {cmd:"/gbanlist",description:"все глобальные блокировки",minRole:"deputy_main_admin"},
   {cmd:"/onlinelist",description:"список пользователей онлайн",minRole:"admin"},
   {cmd:"/zov",description:"вызвать всех участников",minRole:"admin"},
   {cmd:"/unban",description:"снять блокировку этой беседы",minRole:"admin"},
@@ -90,7 +92,7 @@ export async function buildStaffMessage(peerId: number, serverName: string | nul
   };
 
   const sections: [string, AnyRole, number[], string][] = [
-    ["Короли салатников", "main_admin", mainAdmins, "Отсутствует"],
+    ["Короли салатников", "king_salad", serverName ? await getServerRoleMembers(serverName, "king_salad") : [], "Отсутствует"],
     ["Зам. короля салатников", "deputy_main_admin", chatRoleMembers[0], "Отсутствует"],
     ["Старшие администраторы", "senior_admin", chatRoleMembers[1], "Отсутствуют"],
     ["Мега салатники", "admin", chatRoleMembers[2], "Отсутствует"],
