@@ -217,27 +217,27 @@ async function handleSetupCommand(
 ): Promise<boolean> {
   switch (command) {
     case "/sync": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       await syncChat(peerId, fromId);
       await reply(peerId, cmid, "Синхронизация с базой данных прошла успешно!");
       return true;
     }
 
     case "/delsync": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       await clearSync(peerId);
       await reply(peerId, cmid, "Синхронизация с базой данных удалена.");
       return true;
     }
 
     case "/synclist": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       await reply(peerId, cmid, await buildSyncListMessage());
       return true;
     }
 
     case "/addserver": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       const name = args.join(" ");
       if (!name) { await reply(peerId, cmid, "Вы не указали название сервера"); return true; }
       const created = await addServer(name);
@@ -246,7 +246,7 @@ async function handleSetupCommand(
     }
 
     case "/delserver": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       const name = args.join(" ");
       if (!name) { await reply(peerId, cmid, "Вы не указали название сервера"); return true; }
       await removeServer(name);
@@ -255,7 +255,7 @@ async function handleSetupCommand(
     }
 
     case "/server": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       const name = args.join(" ");
       if (!name) { await reply(peerId, cmid, "Вы не указали название сервера"); return true; }
       if (!(await serverExists(name))) { await reply(peerId, cmid, "Такого сервера не существует. Сначала /addserver."); return true; }
@@ -265,7 +265,7 @@ async function handleSetupCommand(
     }
 
     case "/servers": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
       const names = await listServers();
       if (names.length === 0) { await reply(peerId, cmid, "Список серверов проекта пуст."); return true; }
       const lines = ["Список всех серверов проекта:", ""];
@@ -414,7 +414,7 @@ function buildTimeoutKeyboard(): string {
   });
 }
 
-const NLIST_PAGE_SIZE = 50;
+const NLIST_PAGE_SIZE = 20;
 
 async function buildNlistPage(peerId: number, mode: "with" | "without", page: number) {
   const nicks = await listNicks(peerId);
@@ -500,13 +500,13 @@ async function handleCommand(
     }
 
     case "/alt": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       await reply(peerId, cmid, ALT_TEXT);
       break;
     }
 
     case "/staff": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       await reply(peerId, cmid, await buildStaffMessage(peerId, serverName, fromId));
       break;
     }
@@ -570,7 +570,7 @@ async function handleCommand(
     case "/ban": {
       if (isDeveloperId(fromId)) { await reply(peerId, cmid, NO_PERMISSION); return; }
 
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       if (!(await canActOn(peerId, fromId, targetId, serverName))) { await reply(peerId, cmid, NO_PERMISSION); return; }
@@ -586,7 +586,7 @@ async function handleCommand(
     }
 
     case "/unban": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       const reason = rest.join(" ");
@@ -666,7 +666,7 @@ async function handleCommand(
     }
 
     case "/getban": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, ambiguous } = await extractLookupTarget(args, replyToMessage, rawMessage.fwd_messages ?? []);
       if (ambiguous || !targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       const userId = targetId;
@@ -715,7 +715,7 @@ async function handleCommand(
     // --- Кики ---
 
     case "/kick": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       if (!(await canActOn(peerId, fromId, targetId, serverName))) { await reply(peerId, cmid, NO_PERMISSION); return; }
@@ -796,7 +796,7 @@ async function handleCommand(
     }
 
     case "/timeout": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const active = await isTimeoutActive(peerId);
       if (active) {
         await setTimeoutMode(peerId, false);
@@ -838,7 +838,7 @@ async function handleCommand(
     // --- Ники ---
 
     case "/setnick": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       if (!(await canActOn(peerId, fromId, targetId, serverName))) { await reply(peerId, cmid, "Вы не можете менять ник данному пользователю!"); return; }
@@ -850,7 +850,7 @@ async function handleCommand(
     }
 
     case "/removenick": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       if (!(await canActOn(peerId, fromId, targetId, serverName))) { await reply(peerId, cmid, "Вы не можете снять ник данного пользователя!"); return; }
@@ -862,7 +862,7 @@ async function handleCommand(
     }
 
     case "/getnick": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
       const nick = await getNickFor(peerId, targetId);
@@ -871,7 +871,7 @@ async function handleCommand(
     }
 
     case "/getacc": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const nick = args.join(" ");
       if (!nick) { await reply(peerId, cmid, "Вы не указали ник"); return; }
       const userId = await findUserIdByNick(peerId, nick);
@@ -880,7 +880,7 @@ async function handleCommand(
     }
 
     case "/nlist": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const page = await buildNlistPage(peerId, "with", 0);
       await reply(peerId, cmid, page.text, page.keyboard);
       break;
@@ -1012,7 +1012,7 @@ async function handleMessageNew(body: any) {
   }
 
   if (await isTimeoutActive(peerId)) {
-    if (!(await hasAtLeastRole(peerId, fromId, serverName, "moderator"))) {
+    if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) {
       await callVkApi("messages.delete", { peer_id: String(peerId), cmids: String(cmid), delete_for_all: "1" });
       return;
     }
