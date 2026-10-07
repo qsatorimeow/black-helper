@@ -22,10 +22,8 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/clear",description:"удалить сообщение(я)",minRole:"senior_moderator"},
   {cmd:"/addsenmoder",description:"назначить старшего модератора",minRole:"admin"},
   {cmd:"/ban",description:"блокировка в этой беседе",minRole:"admin"},
-  {cmd:"/addms",description:"назначить администратора",minRole:"senior_admin"},
+  {cmd:"/addms",description:"назначить администратора",minRole:"admin"},
   {cmd:"/banlist",description:"блокировки пользователя",minRole:"admin"},
-  {cmd:"/sbanlist",description:"все серверные блокировки",minRole:"senior_admin"},
-  {cmd:"/gbanlist",description:"все глобальные блокировки",minRole:"deputy_main_admin"},
   {cmd:"/onlinelist",description:"список пользователей онлайн",minRole:"admin"},
   {cmd:"/zov",description:"вызвать всех участников",minRole:"admin"},
   {cmd:"/unban",description:"снять блокировку этой беседы",minRole:"admin"},
@@ -47,8 +45,6 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/server",description:"привязать беседу к серверу",minRole:"king_salad"},
   {cmd:"/servers",description:"список всех серверов проекта",minRole:"king_salad"},
   {cmd:"/addzks",description:"назначить зам. короля салатности",minRole:"king_salad"},
-  {cmd:"/addks",description:"назначить короля салатности",minRole:"developer"},
-  {cmd:"/delks",description:"снять короля салатности",minRole:"developer"},
   {cmd:"/resetdata",description:"полная очистка данных",minRole:"developer"},
 ];
 
