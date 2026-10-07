@@ -4,31 +4,96 @@ import { type AnyRole, CHAT_ROLES, getChatRoleMembers, getServerRoleMembers, ROL
 interface CommandInfo { cmd: string; description: string; minRole: AnyRole; }
 
 export const COMMAND_REGISTRY: CommandInfo[] = [
-  {cmd:"/stats",description:"статистика профиля",minRole:"user"},{cmd:"/help",description:"список доступных вам команд",minRole:"user"},{cmd:"/info",description:"официальные ресурсы проекта",minRole:"user"},{cmd:"/staff",description:"список рангов беседы",minRole:"moderator"},{cmd:"/alt",description:"альтернативные названия команд",minRole:"user"},
-  {cmd:"/setnick",description:"назначить ник",minRole:"senior_moderator"},{cmd:"/removenick",description:"убрать ник",minRole:"senior_moderator"},{cmd:"/removerole",description:"убрать роль",minRole:"senior_moderator"},{cmd:"/getacc",description:"найти профиль/профили по нику/никам",minRole:"senior_moderator"},{cmd:"/getnick",description:"узнать ник пользователя",minRole:"senior_moderator"},{cmd:"/nlist",description:"все ники в чате",minRole:"senior_moderator"},{cmd:"/getban",description:"блокировки пользователя",minRole:"senior_moderator"},{cmd:"/addisp",description:"назначить модератора",minRole:"senior_moderator"},{cmd:"/mute",description:"замутить пользователя",minRole:"senior_moderator"},{cmd:"/unmute",description:"снять мут",minRole:"senior_moderator"},{cmd:"/clear",description:"удалить сообщение(я)",minRole:"senior_moderator"},
-  {cmd:"/addsenmoder",description:"назначить старшего модератора",minRole:"admin"},{cmd:"/ban",description:"блокировка в этой беседе",minRole:"admin"},{cmd:"/addms",description:"назначить администратора",minRole:"senior_admin"},{cmd:"/banlist",description:"активные блокировки данного сервера",minRole:"admin"},{cmd:"/onlinelist",description:"список пользователей онлайн",minRole:"admin"},{cmd:"/zov",description:"вызвать всех участников",minRole:"admin"},{cmd:"/unban",description:"снять блокировку этой беседы",minRole:"admin"},
-  {cmd:"/timeout",description:"режим тишины в чате",minRole:"senior_admin"},{cmd:"/sban",description:"блокировка во всех беседах сервера",minRole:"senior_admin"},{cmd:"/skick",description:"кик из всех бесед сервера",minRole:"senior_admin"},{cmd:"/sunban",description:"снять блокировку сервера",minRole:"senior_admin"},
-  {cmd:"/addsenadmin",description:"назначить старшего администратора",minRole:"deputy_main_admin"},{cmd:"/gban",description:"глобальная блокировка",minRole:"deputy_main_admin"},{cmd:"/gunban",description:"снять глобальную блокировку",minRole:"deputy_main_admin"},{cmd:"/gbanpl",description:"глобальная боокировка #2",minRole:"deputy_main_admin"},{cmd:"/gunbanpl",description:"снять глобальную блокировку #2",minRole:"deputy_main_admin"},{cmd:"/gkick",description:"глобальный кик",minRole:"deputy_main_admin"},
-  {cmd:"/sync",description:"синхронизация чата с базой",minRole:"main_admin"},{cmd:"/delsync",description:"удалить синхронизацию",minRole:"main_admin"},{cmd:"/synclist",description:"список синхронизированных чатов",minRole:"main_admin"},{cmd:"/addserver",description:"добавить сервер проекта",minRole:"main_admin"},{cmd:"/delserver",description:"удалить сервер проекта",minRole:"main_admin"},{cmd:"/server",description:"привязать беседу к серверу",minRole:"main_admin"},{cmd:"/servers",description:"список всех серверов проекта",minRole:"main_admin"},{cmd:"/addzks",description:"назначить зам. короля салатности",minRole:"main_admin"},{cmd:"/addks",description:"назначить короля салатности",minRole:"developer"},{cmd:"/delks",description:"снять короля салатности",minRole:"developer"},
+  {cmd:"/stats",description:"статистика профиля",minRole:"user"},
+  {cmd:"/help",description:"список доступных вам команд",minRole:"user"},
+  {cmd:"/info",description:"официальные ресурсы проекта",minRole:"user"},
+  {cmd:"/staff",description:"список рангов беседы",minRole:"moderator"},
+  {cmd:"/alt",description:"альтернативные названия команд",minRole:"user"},
+  {cmd:"/setnick",description:"назначить ник",minRole:"senior_moderator"},
+  {cmd:"/removenick",description:"убрать ник",minRole:"senior_moderator"},
+  {cmd:"/removerole",description:"убрать роль",minRole:"senior_moderator"},
+  {cmd:"/getacc",description:"найти профиль/профили по нику/никам",minRole:"senior_moderator"},
+  {cmd:"/getnick",description:"узнать ник пользователя",minRole:"senior_moderator"},
+  {cmd:"/nlist",description:"все ники в чате",minRole:"senior_moderator"},
+  {cmd:"/getban",description:"блокировки пользователя",minRole:"senior_moderator"},
+  {cmd:"/addisp",description:"назначить модератора",minRole:"senior_moderator"},
+  {cmd:"/mute",description:"замутить пользователя",minRole:"senior_moderator"},
+  {cmd:"/unmute",description:"снять мут",minRole:"senior_moderator"},
+  {cmd:"/clear",description:"удалить сообщение(я)",minRole:"senior_moderator"},
+  {cmd:"/addsenmoder",description:"назначить старшего модератора",minRole:"admin"},
+  {cmd:"/ban",description:"блокировка в этой беседе",minRole:"admin"},
+  {cmd:"/addms",description:"назначить администратора",minRole:"senior_admin"},
+  {cmd:"/banlist",description:"активные блокировки данного сервера",minRole:"admin"},
+  {cmd:"/onlinelist",description:"список пользователей онлайн",minRole:"admin"},
+  {cmd:"/zov",description:"вызвать всех участников",minRole:"admin"},
+  {cmd:"/unban",description:"снять блокировку этой беседы",minRole:"admin"},
+  {cmd:"/timeout",description:"режим тишины в чате",minRole:"senior_admin"},
+  {cmd:"/sban",description:"блокировка во всех беседах сервера",minRole:"senior_admin"},
+  {cmd:"/skick",description:"кик из всех бесед сервера",minRole:"senior_admin"},
+  {cmd:"/sunban",description:"снять блокировку сервера",minRole:"senior_admin"},
+  {cmd:"/addsenadmin",description:"назначить старшего администратора",minRole:"deputy_main_admin"},
+  {cmd:"/gban",description:"глобальная блокировка",minRole:"deputy_main_admin"},
+  {cmd:"/gunban",description:"снять глобальную блокировку",minRole:"deputy_main_admin"},
+  {cmd:"/gbanpl",description:"глобальная боокировка #2",minRole:"deputy_main_admin"},
+  {cmd:"/gunbanpl",description:"снять глобальную блокировку #2",minRole:"deputy_main_admin"},
+  {cmd:"/gkick",description:"глобальный кик",minRole:"deputy_main_admin"},
+  {cmd:"/sync",description:"синхронизация чата с базой",minRole:"main_admin"},
+  {cmd:"/delsync",description:"удалить синхронизацию",minRole:"main_admin"},
+  {cmd:"/synclist",description:"список синхронизированных чатов",minRole:"main_admin"},
+  {cmd:"/addserver",description:"добавить сервер проекта",minRole:"main_admin"},
+  {cmd:"/delserver",description:"удалить сервер проекта",minRole:"main_admin"},
+  {cmd:"/server",description:"привязать беседу к серверу",minRole:"main_admin"},
+  {cmd:"/servers",description:"список всех серверов проекта",minRole:"main_admin"},
+  {cmd:"/addzks",description:"назначить зам. короля салатности",minRole:"main_admin"},
+  {cmd:"/addks",description:"назначить короля салатности",minRole:"developer"},
+  {cmd:"/delks",description:"снять короля салатности",minRole:"developer"},
   {cmd:"/resetdata",description:"полная очистка данных",minRole:"developer"},
 ];
+
 export function buildHelpMessage(userWeight:number):string {
  const lines=["Список доступных вам команд:",""]; for(const c of COMMAND_REGISTRY.filter(c=>userWeight>=ROLE_WEIGHT[c.minRole])) lines.push(c.cmd+" — "+c.description); return lines.join("\n");
 }
-export const ALT_TEXT=[
-"Альтернативные вызовы команд:","stats - стата, статс","help - помощь","info - инфо","staff - стафф","alt - альт","setnick - snick","removenick - rnick","removerole - rrole","getacc - аккаунт","getnick - gnick, никлист","nlist - ники","getban - чекбан, гетбан","addisp - isp, исп","mute - мут","unmute - снятьмут","clear - чистка","addsenmoder - senmoder","ban - бан","addms - ms, мс","banlist - банлист","onlinelist - olist, онлайнлист, олист","zov - зов","timeout - тишина","addsenadmin - senadmin"
+export const ALT_TEXT = [
+  "Альтернативные вызовы команд:",
+  "stats - стата, статс","help - помощь","info - инфо","staff - стафф","alt - альт",
+  "setnick - snick","removenick - rnick","removerole - rrole","getacc - аккаунт",
+  "getnick - gnick, никлист","nlist - ники","getban - чекбан, гетбан","addisp - исп",
+  "mute - мут","unmute - снятьмут","clear - чистка","addsenmoder - senmoder",
+  "ban - бан","addms - ms, мс","banlist - банлист",
+  "onlinelist - olist, онлайнлист, олист","zov - зов","timeout - тишина","addsenadmin - senadmin"
 ].join("\n");
-export const ALT_MAP:Record<string,string>={
-"стата":"/stats","статс":"/stats","помощь":"/help","инфо":"/info","стафф":"/staff","альт":"/alt","snick":"/setnick","rnick":"/removenick","rrole":"/removerole","аккаунт":"/getacc","gnick":"/getnick","никлист":"/getnick","ники":"/nlist","чекбан":"/getban","гетбан":"/getban","исп":"/moder","мут":"/mute","снятьмут":"/unmute","чистка":"/clear","senmoder":"/addsenmoder","бан":"/ban","ms":"/admin","мс":"/admin","банлист":"/banlist","olist":"/olist","онлайнлист":"/olist","олист":"/olist","зов":"/zov","тишина":"/timeout","senadmin":"/addsenadmin"
-};
-export async function buildStaffMessage(peerId:number,serverName:string|null,viewerId:number):Promise<string>{
- const viewer=await resolveUserRole(peerId,viewerId,serverName);
- const [members,mainAdmins,...chatRoleMembers]=await Promise.all([getConversationMembers(peerId),serverName?getServerRoleMembers(serverName,"main_admin"):Promise.resolve([]),...CHAT_ROLES.map(role=>getChatRoleMembers(peerId,role))]);
- const owner=members.find(m=>m.isOwner); const ids=[...mainAdmins,...chatRoleMembers.flat()]; const info=await getUsersInfo(ids);
- const nameOf=(id:number)=>{const x=info.get(id);return profileLink(id,x?x.first_name+" "+x.last_name:"id"+id);};
- const sections:[string,AnyRole,number[],string][]=[
- ["Короли салатников","main_admin",mainAdmins,"Отсутствует"],["Зам. короля салатников","deputy_main_admin",chatRoleMembers[0],"Отсутствует"],["Старшие администраторы","senior_admin",chatRoleMembers[1],"Отсутствуют"],["Мега салатники","admin",chatRoleMembers[2],"Отсутствует"],["Старшие модераторы","senior_moderator",chatRoleMembers[3],"Отсутствуют"],["Испытательные сроки","moderator",chatRoleMembers[4],"Отсутствуют"]];
- const lines=["Владелец беседы — "+(owner?await nameLinkOfAny(owner.memberId):"Отсутствуют"),""];
- for(const [title,role,userIds,empty] of sections) if(ROLE_WEIGHT[role]<=viewer.weight) lines.push(title+":",userIds.length?userIds.map(nameOf).join("\n"):empty,"");
- return lines.join("\n").trim();
+
+export const ALT_MAP: Record<string,string> = {
+  "стата":"/stats","статс":"/stats","помощь":"/help","инфо":"/info","стафф":"/staff","альт":"/alt",
+  "snick":"/setnick","rnick":"/removenick","rrole":"/removerole","аккаунт":"/getacc",
+  "gnick":"/getnick","никлист":"/getnick","ники":"/nlist","чекбан":"/getban","гетбан":"/getban",
+  "исп":"/addisp","мут":"/mute","снятьмут":"/unmute","чистка":"/clear","senmoder":"/addsenmoder",
+  "бан":"/ban","ms":"/addms","мс":"/addms","банлист":"/banlist",
+  "olist":"/onlinelist","онлайнлист":"/onlinelist","олист":"/onlinelist","зов":"/export async function buildStaffMessage(peerId: number, serverName: string | null, viewerId: number): Promise<string> {
+  const viewer = await resolveUserRole(peerId, viewerId, serverName);
+  const [members, mainAdmins, ...chatRoleMembers] = await Promise.all([
+    getConversationMembers(peerId),
+    serverName ? getServerRoleMembers(serverName, "main_admin") : Promise.resolve([]),
+    ...CHAT_ROLES.map((role) => getChatRoleMembers(peerId, role)),
+  ]);
+  const owner = members.find((m) => m.isOwner);
+  const ids = [...mainAdmins, ...chatRoleMembers.flat()];
+  const infoMap = await getUsersInfo(ids);
+  const nameOf = (id: number) => {
+    const info = infoMap.get(id);
+    return profileLink(id, info ? info.first_name + " " + info.last_name : "id" + id);
+  };
+  const sections: [string, AnyRole, number[], string][] = [
+    ["Короли салатников", "main_admin", mainAdmins, "Отсутствует"],
+    ["Зам. короля салатников", "deputy_main_admin", chatRoleMembers[0], "Отсутствует"],
+    ["Старшие администраторы", "senior_admin", chatRoleMembers[1], "Отсутствуют"],
+    ["Мега салатники", "admin", chatRoleMembers[2], "Отсутствует"],
+    ["Старшие модераторы", "senior_moderator", chatRoleMembers[3], "Отсутствуют"],
+    ["Испытательные сроки", "moderator", chatRoleMembers[4], "Отсутствуют"],
+  ];
+  const lines = ["Владелец беседы — " + (owner ? await nameLinkOfAny(owner.memberId) : "Отсутствуют"), ""];
+  for (const [title, role, userIds, empty] of sections) {
+    if (ROLE_WEIGHT[role] <= viewer.weight) lines.push(title + ":", userIds.length ? userIds.map(nameOf).join("\n") : empty, "");
+  }
+  return lines.join("\n").trim();
 }
