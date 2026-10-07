@@ -303,7 +303,7 @@ const RANK_BASE: Record<string, Omit<RankCommandConfig, "action">> = {
   sa: { requiredRole: "developer", role: "spec_admin", scope: "global" },
   zsa: { requiredRole: "spec_admin", role: "deputy_spec_admin", scope: "global" },
   serverga: { requiredRole: "deputy_spec_admin", role: "main_admin", scope: "server" },
-  ks: { requiredRole: "developer", role: "main_admin", scope: "server" },
+  ks: { requiredRole: "developer", role: "king_salad", scope: "server" },
   zga: { requiredRole: "main_admin", role: "deputy_main_admin", scope: "chat" },
   senadmin: { requiredRole: "deputy_main_admin", role: "senior_admin", scope: "chat" },
   admin: { requiredRole: "senior_admin", role: "admin", scope: "chat" },
@@ -343,13 +343,18 @@ async function handleRankCommand(
     if (!serverName) { await reply(peerId, cmid, "Эта беседа не привязана к серверу."); return true; }
 
     if (cfg.action === "add") {
-      // На сервере только один Главный администратор — снимаем прежнего.
-      const currentGAs = await getServerRoleMembers(serverName, cfg.role as ServerRole);
-      for (const oldGA of currentGAs) await removeServerRole(serverName, cfg.role as ServerRole, oldGA);
-      await addServerRole(serverName, cfg.role as ServerRole, targetId);
-      // ГА не может занимать должности в чатах своего же сервера — снимаем их.
-      const chats = await getServerChats(serverName);
-      for (const c of chats) for (const role of CHAT_ROLES) await removeChatRole(c, role, targetId);
+      if (cfg.role === "main_admin") {
+        // Главный администратор на сервере может быть только один.
+        const currentGAs = await getServerRoleMembers(serverName, "main_admin");
+        for (const oldGA of currentGAs) await removeServerRole(serverName, "main_admin", oldGA);
+        await addServerRole(serverName, "main_admin", targetId);
+        // ГА не может занимать должности в чатах своего же сервера.
+        const chats = await getServerChats(serverName);
+        for (const c of chats) for (const role of CHAT_ROLES) await removeChatRole(c, role, targetId);
+      } else {
+        // Королей салатников может быть несколько.
+        await addServerRole(serverName, cfg.role as ServerRole, targetId);
+      }
     } else {
       await removeServerRole(serverName, cfg.role as ServerRole, targetId);
     }
@@ -693,6 +698,53 @@ async function handleCommand(
       if (chatBan) lines.push(`${await nameLinkOf(chatBan.byUserId)} | ${chatBan.reason} | ${formatMsk(chatBan.at)}`);
 
       await reply(peerId, cmid, lines.join("\n"));
+      break;
+    }
+
+    case "/sbanlist": {
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      const keys = await scanKeys("b2:sban:*:*");
+      if (keys.length === 0) { await reply(peerId, cmid, "Список серверных блокировок пуст."); return; }
+      const lines = ["Список серверных блокировок:", ""];
+      for (const key of keys) {
+        const parts = key.split(":");
+        const serverKey = parts[2] ?? "";
+        const userId = Number(parts[3]);
+        if (!serverKey || !userId) continue;
+        const record = await getServerBan(serverKey, userId);
+        if (!record) continue;
+        lines.push(
+          "Сервер: " + serverKey,
+          "Пользователь: " + await nameLinkOf(userId),
+          "Выдал-(а): " + await nameLinkOf(record.byUserId),
+          "Причина: " + record.reason,
+          "Дата: " + formatMsk(record.at),
+          "",
+        );
+      }
+      await reply(peerId, cmid, lines.join("\n").trim());
+      break;
+    }
+
+    case "/gbanlist": {
+      if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
+      const keys = await scanKeys("b2:gban:*");
+      if (keys.length === 0) { await reply(peerId, cmid, "Список глобальных блокировок пуст."); return; }
+      const lines = ["Список глобальных блокировок:", ""];
+      for (const key of keys) {
+        const userId = Number(key.split(":")[2]);
+        if (!userId) continue;
+        const record = await getGlobalBan(userId);
+        if (!record) continue;
+        lines.push(
+          "Пользователь: " + await nameLinkOf(userId),
+          "Выдал-(а): " + await nameLinkOf(record.byUserId),
+          "Причина: " + record.reason,
+          "Дата: " + formatMsk(record.at),
+          "",
+        );
+      }
+      await reply(peerId, cmid, lines.join("\n").trim());
       break;
     }
 
