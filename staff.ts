@@ -35,7 +35,7 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/gban",description:"глобальная блокировка",minRole:"deputy_main_admin"},
   {cmd:"/gunban",description:"снять глобальную блокировку",minRole:"deputy_main_admin"},
   {cmd:"/gbanpl",description:"глобальная боокировка #2",minRole:"deputy_main_admin"},
-  {cmd:"/gunbanpl",description:"снять глобальную блокировку #2",minRole:"deputy_main_admin"},
+  {cmd:"/gunbanpl",description:"снять глобальную блокировку #2",minRole:"king_salad"},
   {cmd:"/gkick",description:"глобальный кик",minRole:"deputy_main_admin"},
   {cmd:"/sync",description:"синхронизация чата с базой",minRole:"king_salad"},
   {cmd:"/delsync",description:"удалить синхронизацию",minRole:"king_salad"},
