@@ -304,7 +304,7 @@ const RANK_BASE: Record<string, Omit<RankCommandConfig, "action">> = {
   zsa: { requiredRole: "spec_admin", role: "deputy_spec_admin", scope: "global" },
   serverga: { requiredRole: "deputy_spec_admin", role: "main_admin", scope: "server" },
   ks: { requiredRole: "developer", role: "king_salad", scope: "server" },
-  zga: { requiredRole: "main_admin", role: "deputy_main_admin", scope: "chat" },
+  zks: { requiredRole: "king_salad", role: "deputy_main_admin", scope: "chat" },
   senadmin: { requiredRole: "deputy_main_admin", role: "senior_admin", scope: "chat" },
   admin: { requiredRole: "senior_admin", role: "admin", scope: "chat" },
   senmoder: { requiredRole: "admin", role: "senior_moderator", scope: "chat" },
@@ -511,7 +511,6 @@ async function handleCommand(
     }
 
     case "/staff": {
-      if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       await reply(peerId, cmid, await buildStaffMessage(peerId, serverName, fromId));
       break;
     }
