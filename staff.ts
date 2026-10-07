@@ -60,14 +60,22 @@ const HELP_SECTIONS: Array<{ role: AnyRole; title: string }> = [
 
 export function buildHelpMessage(userWeight:number):string {
   const lines: string[] = [];
+
+  if (userWeight >= ROLE_WEIGHT.developer) {
+    lines.push("Команды разработчика:");
+    for (const c of COMMAND_REGISTRY) lines.push(c.cmd + " — " + c.description);
+    return lines.join("\n");
+  }
+
   for (const section of HELP_SECTIONS) {
-    if (userWeight < ROLE_WEIGHT[section.role]) continue;
-    const commands = COMMAND_REGISTRY.filter((c) => c.minRole === section.role && userWeight >= ROLE_WEIGHT[c.minRole]);
+    if (section.role === "developer" || userWeight < ROLE_WEIGHT[section.role]) continue;
+    const commands = COMMAND_REGISTRY.filter((c) => c.minRole === section.role);
     if (commands.length === 0) continue;
     if (lines.length > 0) lines.push("");
     lines.push(section.title);
     for (const c of commands) lines.push(c.cmd + " — " + c.description);
   }
+
   return lines.join("\n");
 }
 export const ALT_TEXT = [
