@@ -39,21 +39,40 @@ export const COMMAND_REGISTRY: CommandInfo[] = [
   {cmd:"/gbanpl",description:"глобальная боокировка #2",minRole:"deputy_main_admin"},
   {cmd:"/gunbanpl",description:"снять глобальную блокировку #2",minRole:"deputy_main_admin"},
   {cmd:"/gkick",description:"глобальный кик",minRole:"deputy_main_admin"},
-  {cmd:"/sync",description:"синхронизация чата с базой",minRole:"main_admin"},
-  {cmd:"/delsync",description:"удалить синхронизацию",minRole:"main_admin"},
-  {cmd:"/synclist",description:"список синхронизированных чатов",minRole:"main_admin"},
-  {cmd:"/addserver",description:"добавить сервер проекта",minRole:"main_admin"},
-  {cmd:"/delserver",description:"удалить сервер проекта",minRole:"main_admin"},
-  {cmd:"/server",description:"привязать беседу к серверу",minRole:"main_admin"},
-  {cmd:"/servers",description:"список всех серверов проекта",minRole:"main_admin"},
-  {cmd:"/addzks",description:"назначить зам. короля салатности",minRole:"main_admin"},
+  {cmd:"/sync",description:"синхронизация чата с базой",minRole:"king_salad"},
+  {cmd:"/delsync",description:"удалить синхронизацию",minRole:"king_salad"},
+  {cmd:"/synclist",description:"список синхронизированных чатов",minRole:"king_salad"},
+  {cmd:"/addserver",description:"добавить сервер проекта",minRole:"king_salad"},
+  {cmd:"/delserver",description:"удалить сервер проекта",minRole:"king_salad"},
+  {cmd:"/server",description:"привязать беседу к серверу",minRole:"king_salad"},
+  {cmd:"/servers",description:"список всех серверов проекта",minRole:"king_salad"},
+  {cmd:"/addzks",description:"назначить зам. короля салатности",minRole:"king_salad"},
   {cmd:"/addks",description:"назначить короля салатности",minRole:"developer"},
   {cmd:"/delks",description:"снять короля салатности",minRole:"developer"},
   {cmd:"/resetdata",description:"полная очистка данных",minRole:"developer"},
 ];
 
+const HELP_SECTIONS: Array<{ role: AnyRole; title: string }> = [
+  { role: "moderator", title: "Команды испытательных сроков:" },
+  { role: "senior_moderator", title: "Команды старших модераторов:" },
+  { role: "admin", title: "Команды мега салатников:" },
+  { role: "senior_admin", title: "Команды старших администраторов:" },
+  { role: "deputy_main_admin", title: "Команды зам. короля салатников:" },
+  { role: "king_salad", title: "Команды короля салатников:" },
+  { role: "developer", title: "Команды разработчика:" },
+];
+
 export function buildHelpMessage(userWeight:number):string {
- const lines=["Список доступных вам команд:",""]; for(const c of COMMAND_REGISTRY.filter(c=>userWeight>=ROLE_WEIGHT[c.minRole])) lines.push(c.cmd+" — "+c.description); return lines.join("\n");
+  const lines: string[] = [];
+  for (const section of HELP_SECTIONS) {
+    if (userWeight < ROLE_WEIGHT[section.role]) continue;
+    const commands = COMMAND_REGISTRY.filter((c) => c.minRole === section.role && userWeight >= ROLE_WEIGHT[c.minRole]);
+    if (commands.length === 0) continue;
+    if (lines.length > 0) lines.push("");
+    lines.push(section.title);
+    for (const c of commands) lines.push(c.cmd + " — " + c.description);
+  }
+  return lines.join("\n");
 }
 export const ALT_TEXT = [
   "Альтернативные вызовы команд:",
