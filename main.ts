@@ -177,6 +177,7 @@ async function extractLookupTarget(
 
 /** Никто не может действовать на себя. Иначе — строго выше рангом (и не на бота). */
 async function canActOn(peerId: number, actorId: number, targetId: number, serverName: string | null): Promise<boolean> {
+  if (targetId < 0) return false;
   if (actorId === targetId) return false;
   if (isDeveloperId(actorId)) return true;
   const [actor, target] = await Promise.all([
@@ -302,6 +303,7 @@ const RANK_BASE: Record<string, Omit<RankCommandConfig, "action">> = {
   sa: { requiredRole: "developer", role: "spec_admin", scope: "global" },
   zsa: { requiredRole: "spec_admin", role: "deputy_spec_admin", scope: "global" },
   serverga: { requiredRole: "deputy_spec_admin", role: "main_admin", scope: "server" },
+  ks: { requiredRole: "developer", role: "main_admin", scope: "server" },
   zga: { requiredRole: "main_admin", role: "deputy_main_admin", scope: "chat" },
   senadmin: { requiredRole: "deputy_main_admin", role: "senior_admin", scope: "chat" },
   admin: { requiredRole: "senior_admin", role: "admin", scope: "chat" },
@@ -332,6 +334,8 @@ async function handleRankCommand(
 
   const { targetId } = await extractTarget(args, replyToMessage);
   if (!targetId) { await reply(peerId, cmid, NO_TARGET); return true; }
+  const botGroupId = await getBotGroupId();
+  if (botGroupId && targetId === -botGroupId) { await reply(peerId, cmid, NO_PERMISSION); return true; }
   const selfByDeveloper = isDeveloperId(fromId) && targetId === fromId;
   if (!selfByDeveloper && !(await canActOn(peerId, fromId, targetId, serverName))) { await reply(peerId, cmid, NO_PERMISSION); return true; }
 
@@ -464,6 +468,12 @@ async function handleCommand(
   // deno-lint-ignore no-explicit-any
   rawMessage: any,
 ) {
+  const botGroupId = await getBotGroupId();
+  if (botGroupId && replyToMessage?.fromId === -botGroupId) {
+    await reply(peerId, cmid, NO_PERMISSION);
+    return;
+  }
+
   if (await handleRankCommand(peerId, fromId, cmid, serverName, command, args, replyToMessage)) return;
 
   switch (command) {
@@ -547,6 +557,8 @@ async function handleCommand(
     // --- Баны ---
 
     case "/ban": {
+      if (isDeveloperId(fromId)) { await reply(peerId, cmid, NO_PERMISSION); return; }
+
       if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
@@ -577,6 +589,8 @@ async function handleCommand(
     }
 
     case "/sban": {
+      if (isDeveloperId(fromId)) { await reply(peerId, cmid, NO_PERMISSION); return; }
+
       if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_main_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       if (!serverName) { await reply(peerId, cmid, "Эта беседа не привязана к серверу."); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
@@ -609,6 +623,8 @@ async function handleCommand(
     }
 
     case "/gban": {
+      if (isDeveloperId(fromId)) { await reply(peerId, cmid, NO_PERMISSION); return; }
+
       if (!(await hasAtLeastRole(peerId, fromId, serverName, "deputy_spec_admin"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
@@ -729,6 +745,7 @@ async function handleCommand(
     // --- Мут / тайм-аут / очистка ---
 
     case "/mute": {
+      if (isDeveloperId(fromId)) { await reply(peerId, cmid, NO_PERMISSION); return; }
       if (!(await hasAtLeastRole(peerId, fromId, serverName, "senior_moderator"))) { await reply(peerId, cmid, NO_PERMISSION); return; }
       const { targetId, rest } = await extractTarget(args, replyToMessage);
       if (!targetId) { await reply(peerId, cmid, NO_TARGET); return; }
